@@ -3,3 +3,4 @@ wgan_tensor/debug/
 wgan_tensor/output/
 wgan_tensor/data/
 .idea/
+**/.DS_Store
