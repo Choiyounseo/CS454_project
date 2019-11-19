@@ -24,6 +24,25 @@ def imshow_grid(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
+def defensegan(x):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    L = 1000
+    lr = 500
+
+    z = torch.randn((x.shape[0], 100)).view(-1, 100, 1, 1).to(device)
+    z.requires_grad = True
+    for l in range(L):
+        print(l)
+        samples = netG(z)
+        MSE_loss = nn.MSELoss()
+        loss_mse = MSE_loss(samples[0], x)
+        loss_mse.backward()
+        z = z - lr * z.grad
+        z = z.detach()  # not leaf
+        z.requires_grad = True
+
+    return netG(z)
+
 # Hyper parameters
 params = {
     'input_size': 28,  # image size 1x64x64
