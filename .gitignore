@@ -1,5 +1,7 @@
-wgan_tensor/env/
+**/env/
+**/venv/
 wgan_tensor/debug/
 wgan_tensor/data/
 .idea/
 **/.DS_Store
+**/__pycache__
