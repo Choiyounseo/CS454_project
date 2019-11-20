@@ -1,6 +1,0 @@
-model_checkpoint_path: "GAN.model-22000"
-all_model_checkpoint_paths: "GAN.model-20000"
-all_model_checkpoint_paths: "GAN.model-20500"
-all_model_checkpoint_paths: "GAN.model-21000"
-all_model_checkpoint_paths: "GAN.model-21500"
-all_model_checkpoint_paths: "GAN.model-22000"
