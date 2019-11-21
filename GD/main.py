@@ -21,24 +21,28 @@ def imshow_grid(img):
     plt.show()
 
 def defensegan(x):
-    # todo R times doing this -> optimal z will be z hat
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    L = 12000
+    rr = 10
+    L = 200
     lr = 500
 
-    z = torch.randn((x.shape[0], 100)).view(-1, 100, 1, 1).to(device)
-    z.requires_grad = True
-    for l in range(L):
-        print(l)
-        samples = netG(z)
-        MSE_loss = nn.MSELoss()
-        loss_mse = MSE_loss(samples[0], x)
-        loss_mse.backward()
-        z = z - lr * z.grad
-        z = z.detach()  # not leaf
-        z.requires_grad = True
+    candidates = []
 
-    return netG(z)
+    for r in range(rr):
+        z = torch.randn((x.shape[0], 100)).view(-1, 100, 1, 1).to(device)
+        z.requires_grad = True
+        for l in range(L):
+            print(str(r) + " - " + str(l))
+            samples = netG(z)
+            MSE_loss = nn.MSELoss()
+            loss_mse = MSE_loss(samples[0], x)
+            loss_mse.backward()
+            candidates.append((loss_mse.item(), z))
+            z = z - lr * z.grad
+            z = z.detach()  # not leaf
+            z.requires_grad = True
+
+    return netG(min(candidates, key=lambda x: x[0])[1])
 
 # Hyper parameters
 params = {
