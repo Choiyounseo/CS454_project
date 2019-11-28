@@ -49,7 +49,7 @@ def imshow_images(rec_rr, zs, netG):
 
 def defensegan(x, observation_change=False, observation_step=100):
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-	rr = 1
+	rr = 10
 	L = 200
 	lr = 500
 	zs = []
