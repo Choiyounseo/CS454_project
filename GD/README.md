@@ -6,7 +6,10 @@ python -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
-실행하기전에 main.py 에 있는 fgsm_image_path, model_weight_path 설정해주면 끝
+실행
 ```
 python main.py
 ```
+defensegan 안에 observation_change 라는 거 추가했습니다.
+
+observation_step 만큼 진행될때마다 rr(default=10) 개의 랜덤이미지의 변화를 보실수 있습니다.
