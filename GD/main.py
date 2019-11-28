@@ -49,7 +49,7 @@ def imshow_images(rec_rr, zs, netG):
 
 def defensegan(x, observation_change=False, observation_step=100):
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-	rr = 10
+	rr = 1
 	L = 200
 	lr = 500
 	zs = []
@@ -93,6 +93,9 @@ def main():
 	classifier_a.load_state_dict(torch.load(classifier_weight_path + '_a.pt', map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu')))
 	classifier_a.eval()
 
+	correct = {}
+	total = {}
+
 	for file_path in glob.glob("./data/fgsm_images/*.jpg"):
 		# get epsilon and truth by parsing
 		epsilon = file_path.split('/')[-1].split('_')[0]
@@ -107,9 +110,21 @@ def main():
 		result = defensegan(fgsm_image)
 
 		# todo do classify image
-		# output_origin = classifier_a.forward(fgsm_image)
-		# output_defense = classifier_a.forward(result)
+		# output_origin = classifier_a(fgsm_image.unsqueeze(0)).data.max(1, keepdim=True)[1].item()
+		output_defense = classifier_a.forward(result).data.max(1, keepdim=True)[1].item()
 
+		if epsilon+'-'+truth in total:
+			total[epsilon+'-'+truth] += 1
+		else:
+			total[epsilon+'-'+truth] = 1
+
+		if epsilon+'-'+truth not in correct:
+			correct[epsilon+'-'+truth] = 0
+		if output_defense == int(truth):
+			correct[epsilon+'-'+truth] += 1
+
+	for k, v in sorted(total.items()):
+		print("{} : {}%".format(k, correct[k]/v*100))
 
 
 if __name__ == "__main__":
