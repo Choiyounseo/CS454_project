@@ -32,7 +32,8 @@ device = torch.device("cuda:0" if (torch.cuda.is_available() and params['ngpu'] 
 Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
 
 # transform
-transform = transforms.Compose([transforms.ToTensor()])
+transform = transforms.Compose([transforms.ToTensor(),
+                                transforms.Normalize(mean=(0.5,), std=(0.5,))])
 # data sets and data loader
 train_data = datasets.MNIST(root='data/', train=True, transform=transform, download=True)
 test_data = datasets.MNIST(root='data/', train=False, transform=transform, download=True)
