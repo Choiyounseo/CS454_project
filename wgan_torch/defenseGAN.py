@@ -36,6 +36,7 @@ params = {
 
 model_weight_path = './data/weights/netG_12500.pth'
 classifier_weight_path = './classifiers/checkpoint'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 netG = None
 MSE_loss = nn.MSELoss()
 
@@ -61,7 +62,6 @@ def imshow_images(rec_rr, zs, netG):
 	plt.show()
 
 def defensegan(x, observation_change=False, observation_step=100):
-	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	x = x.view(28, 28).numpy().astype(np.float64)
 	initial_population = torch.FloatTensor(params['r'], params['nz'], 1, 1).normal_(0, 1)
 	initial_population = initial_population.view(params['r'], params['nz']).numpy()
@@ -121,7 +121,7 @@ def defensegan(x, observation_change=False, observation_step=100):
 
 		# Apply crossover and mutation on the offspring
 		'''
-        they modify those individuals within the toolbox container 
+        they modify those individuals within the toolbox container
         and we do not need to reassign their results.
         '''
 		# TODO: want p_new1 = p_m - beta(p_m - p_d), p_new2 = p_m + beta(p_m - p_d)
@@ -194,24 +194,26 @@ def main():
 	# Generator(ngpu, nc, nz, ngf)
 	global netG
 	netG = Generator(params['ngpu'], params['nc'], params['nz'], params['ngf'])
-	netG.load_state_dict(torch.load(model_weight_path))
+	netG.load_state_dict(torch.load(model_weight_path, map_location=device))
 
 	# Classifier
-	classifier_b = ClassifierB()
-	classifier_b.load_state_dict(torch.load(classifier_weight_path + '_b.pt')['model'])
-	classifier_b.eval()
+	classifier_a = ClassifierA()
+	# classifier_b.load_state_dict(torch.load(classifier_weight_path + '_b.pt', map_location=device)['model'])
+	classifier_a.load_state_dict(torch.load(classifier_weight_path + '_a.pt', map_location=device))
+	classifier_a.eval()
 
 	# available epsilon values : 0.1, 0.2, 0.3, 0.05, 0.15, 0.25
 	epsilon_set = [0.1, 0.2, 0.3, 0.05, 0.15, 0.25]
 	acc_defense_gan = [0] * 6  # accuracy of defense GAN
-	acc_classifier_b = [0] * 6  # accuracy of classifier b
+	acc_classifier_a = [0] * 6  # accuracy of classifier a
 	total = [0] * 6  # number of fgsm images for each epsilon
 	correct_defense_gan = [0] * 6  # number of fgsm images correctly classified for each epsilon by defense gan
-	correct_classifier_b = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier b
+	correct_classifier_a = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
 	for file_path in glob.glob("./data/fgsm_images_a/*.jpg"):  # fgsm images from classifier a (fgsm_images_a)
+		print(file_path)
 		# get epsilon and ground truth by parsing
-		file_name = file_path.split('\\')[1].split('_')
+		file_name = file_path.split('/')[-1].split('_')
 		epsilon = float(file_name[0])
 		ground_truth = float(file_name[1])
 		fgsm_truth = float(file_name[3])
@@ -220,32 +222,32 @@ def main():
 		fgsm_image = Image.open(file_path)
 		fgsm_image = TF.to_tensor(fgsm_image)
 		fgsm_image = transform(fgsm_image)  # torch.Size([1, 28, 28])
-		imshow(fgsm_image)
+		# imshow(fgsm_image)
 		# do defense gan
 		result_image = defensegan(fgsm_image)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
 		# to classify image
-		outputs_defense_gan = classifier_b(result_image)
-		outputs_classifier_b = classifier_b(fgsm_image.view(1, 1, params['input_size'], params['input_size']))
+		outputs_defense_gan = classifier_a(result_image)
+		outputs_classifier_a = classifier_a(fgsm_image.view(1, 1, params['input_size'], params['input_size']))
 		prediction_defense_gan = torch.max(outputs_defense_gan.data, 1)[1]
-		prediction_classifier_b = torch.max(outputs_classifier_b.data, 1)[1]
+		prediction_classifier_a = torch.max(outputs_classifier_a.data, 1)[1]
 		#print('output from defense gan is ' + str(outputs_defense_gan))
-		#print('output from classifier is ' + str(outputs_classifier_b))
+		#print('output from classifier is ' + str(outputs_classifier_a))
 		print('defense gan classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
 			  ') as ' + str(prediction_defense_gan.item()))
-		print('classifier b classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
-			  ') as ' + str(prediction_classifier_b.item()))
+		print('classifier a classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
+			  ') as ' + str(prediction_classifier_a.item()))
 		epsilon_index = epsilon_set.index(epsilon)  # returns the index of epsilon from epsilon_set
 		total[epsilon_index] += 1
 		if prediction_defense_gan.item() == ground_truth:
 			print('prediction from defense gan correct!')
 			correct_defense_gan[epsilon_index] += 1
-		if prediction_classifier_b.item() == ground_truth:
+		if prediction_classifier_a.item() == ground_truth:
 			print('prediction from classifier correct! - this should not happen...')
-			correct_classifier_b[epsilon_index] += 1
-		break
+			correct_classifier_a[epsilon_index] += 1
+		# break
 	print('total # images for each epsilon : ' + str(total))
 	print('correct defense gan : ' + str(correct_defense_gan))
-	print('correct classifier b : ' + str(correct_classifier_b))
+	print('correct classifier a : ' + str(correct_classifier_a))
 
 if __name__ == "__main__":
 	main()
