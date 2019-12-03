@@ -61,7 +61,7 @@ def imshow_images(rec_rr, zs, netG):
 	plt.show()
 
 def defensegan(x, observation_change=False, observation_step=100):
-	x = x.view(28, 28).numpy().astype(np.float64)
+	x = x.view(28, 28).detach().numpy().astype(np.float64)
 	initial_population = torch.FloatTensor(params['r'], params['nz'], 1, 1).normal_(0, 1)
 	initial_population = initial_population.view(params['r'], params['nz']).numpy()
 	def evalFunc(individual):
@@ -209,7 +209,7 @@ def main():
 	correct_defense_gan = [0] * 6  # number of fgsm images correctly classified for each epsilon by defense gan
 	correct_classifier_a = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
-	for file_path in glob.glob("./data/fgsm_images_a/*.jpg"):  # fgsm images from classifier a (fgsm_images_a)
+	for file_path in glob.glob("./data/classifier_a_fgsm_small_tensors/*.pt"):  # fgsm images from classifier a (fgsm_images_a)
 		print(file_path)
 		# get epsilon and ground truth by parsing
 		file_name = file_path.split('/')[-1].split('_')
@@ -218,9 +218,7 @@ def main():
 		fgsm_truth = float(file_name[3])
 		print('This fgsm image is originally ' + str(int(ground_truth)) + ', misclassified as ' +
 			  str(int(fgsm_truth)) + ' with epsilon ' + str(epsilon))
-		fgsm_image = Image.open(file_path)
-		fgsm_image = TF.to_tensor(fgsm_image)
-		fgsm_image = transform(fgsm_image)  # torch.Size([1, 28, 28])
+		fgsm_image = torch.load(file_path)[0]
 		# imshow(fgsm_image)
 		# do defense gan
 		result_image = defensegan(fgsm_image)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
