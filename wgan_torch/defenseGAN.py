@@ -38,7 +38,6 @@ model_weight_path = './data/weights/netG_12500.pth'
 classifier_weight_path = './classifiers/checkpoint'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 netG = None
-MSE_loss = nn.MSELoss()
 
 # transform
 transform = transforms.Compose([transforms.Normalize(mean=(0.5,), std=(0.5,))])
@@ -187,7 +186,7 @@ def defensegan(x, observation_change=False, observation_step=100):
 	best_ind = tools.selBest(pop, 1)[0]
 	z = torch.from_numpy(best_ind).view(1, 100, 1, 1)
 	gen_image = netG(z)
-	imshow(gen_image.detach())
+	# imshow(gen_image.detach())
 	return gen_image
 
 def main():
