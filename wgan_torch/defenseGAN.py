@@ -19,19 +19,13 @@ import os
 # Hyper parameters
 params = {
 	'input_size': 28,  # image size 1x64x64
-	'batch_size': 64,  # batch size
 	'r': 10,   # population size
 	'L': 200,  # number of iterations
+	'lr': 500,  # learning rate
 	'nc': 1,  # number of channels
 	'nz': 100,  # size of z latent vector
 	'ngf': 64,  # size of feature maps in generator
-	'ndf': 32,  # size of feature maps in discriminator
-	'num_epochs': 1000,  # number of epochs
-	'lr': 0.0001,  # learning rate
-	'beta1': 0.5,   # beta1 for adam optimizer
 	'ngpu': 1,  # number of GPU
-	'lambda_gp': 10,  # loss weight for gradient penalty
-	'n_critic': 5,
 }
 
 model_weight_path = './data/weights/netG_12500.pth'
@@ -60,7 +54,40 @@ def imshow_images(rec_rr, zs, netG):
 		ax.imshow(np_img)
 	plt.show()
 
-def defensegan(x, observation_change=False, observation_step=100):
+
+def defensegan_gd(x, observation_change=False, observation_step=100):
+	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+	zs = []
+
+	for i in range(params['r']):
+		zs.append(torch.randn((x.shape[0], 100)).view(-1, 100, 1, 1).to(device))
+		zs[i].requires_grad = True
+	for l in range(params['L']):
+		for i in range(params['r']):
+			samples = netG(zs[i])
+			MSE_loss = nn.MSELoss()
+			loss_mse = MSE_loss(samples[0], x)
+			loss_mse.backward()
+			zs[i] = zs[i] - params['lr'] * zs[i].grad
+			zs[i] = zs[i].detach()  # not leaf
+			zs[i].requires_grad = True
+
+		if observation_change and l % observation_step == 0:
+			imshow_images(params['r'], zs, netG)
+
+	MSE_loss = nn.MSELoss()
+	optimal_loss = MSE_loss(netG(zs[0])[0], x)
+	z_hat = zs[0]
+	for i in range(1, params['r']):
+		MSE_loss = nn.MSELoss()
+		loss_mse = MSE_loss(netG(zs[i])[0], x)
+		if optimal_loss.le(loss_mse):
+			optimal_loss = loss_mse
+			z_hat = zs[i]
+
+	return netG(z_hat)
+
+def defensegan_ga(x, observation_change=False, observation_step=100):
 	x = x.view(28, 28).detach().numpy().astype(np.float64)
 	initial_population = torch.FloatTensor(params['r'], params['nz'], 1, 1).normal_(0, 1)
 	initial_population = initial_population.view(params['r'], params['nz']).numpy()
@@ -210,7 +237,6 @@ def main():
 	correct_classifier_a = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
 	for file_path in glob.glob("./data/classifier_a_fgsm_small_tensors/*.pt"):  # fgsm images from classifier a (fgsm_images_a)
-		print(file_path)
 		# get epsilon and ground truth by parsing
 		file_name = file_path.split('/')[-1].split('_')
 		epsilon = float(file_name[0])
@@ -221,7 +247,7 @@ def main():
 		fgsm_image = torch.load(file_path)[0]
 		# imshow(fgsm_image)
 		# do defense gan
-		result_image = defensegan(fgsm_image)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
+		result_image = defensegan_gd(fgsm_image)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
 		# to classify image
 		outputs_defense_gan = classifier_a(result_image)
 		outputs_classifier_a = classifier_a(fgsm_image.view(1, 1, params['input_size'], params['input_size']))
@@ -241,6 +267,7 @@ def main():
 		if prediction_classifier_a.item() == ground_truth:
 			print('prediction from classifier correct! - this should not happen...')
 			correct_classifier_a[epsilon_index] += 1
+		print()
 		# break
 	print('total # images for each epsilon : ' + str(total))
 	print('correct defense gan : ' + str(correct_defense_gan))
