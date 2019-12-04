@@ -56,7 +56,6 @@ def imshow_images(rec_rr, zs, netG):
 
 
 def defensegan_gd(x, observation_change=False, observation_step=100):
-	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	zs = []
 
 	for i in range(params['r']):
