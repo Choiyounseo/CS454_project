@@ -19,10 +19,10 @@ class ClassifierC(nn.Module):
         self.dropout2 = nn.Dropout(0.5)
         self.FC2 = nn.Linear(128, 10)
         self.softmax = nn.Softmax()
-
+        
     def forward(self, x):
         in_size = x.size(0)
-        x = self.relu(self.conv1(x))
+        x = self.relu(self.conv1(x)) 
         x = self.relu(self.conv2(x))
         x = self.dropout1(x)
         x = x.view(-1, 64*15*15)
@@ -32,3 +32,14 @@ class ClassifierC(nn.Module):
         x = self.softmax(x)
 
         return x
+    
+    def get_output(self, x):
+        in_size = x.size(0)
+        x = self.relu(self.conv1(x)) 
+        x = self.relu(self.conv2(x))
+        x = x.view(-1, 64*15*15)
+        x = self.relu(self.FC1(x))
+        x = self.FC2(x)
+        x = self.softmax(x)
+
+        return x        
