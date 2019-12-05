@@ -44,19 +44,20 @@ def imshow_images(rec_rr, zs, netG):
 def defensegan(x, observation_change=False, observation_step=100):
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	zs = []
+	opts = []
 
 	for i in range(params['r']):
-		zs.append(torch.randn((x.shape[0], 100)).view(-1, 100, 1, 1).to(device))
-		zs[i].requires_grad = True
+		zs.append(torch.randn((x.shape[0], 100, 1, 1), requires_grad=True, device=device))
+		optimizer = torch.optim.SGD([zs[i]], lr=params['lr'], momentum=0.7)
+		opts.append(optimizer)
 	for l in range(params['L']):
 		for i in range(params['r']):
 			samples = netG(zs[i])
 			MSE_loss = nn.MSELoss()
 			loss_mse = MSE_loss(samples[0], x)
+			opts[i].zero_grad()
 			loss_mse.backward()
-			zs[i] = zs[i] - params['lr'] * zs[i].grad
-			zs[i] = zs[i].detach()  # not leaf
-			zs[i].requires_grad = True
+			opts[i].step()
 
 		if observation_change and l % observation_step == 0:
 			imshow_images(params['r'], zs, netG)
@@ -67,7 +68,7 @@ def defensegan(x, observation_change=False, observation_step=100):
 	for i in range(1, params['r']):
 		MSE_loss = nn.MSELoss()
 		loss_mse = MSE_loss(netG(zs[i])[0], x)
-		if optimal_loss.le(loss_mse):
+		if optimal_loss.ge(loss_mse):
 			optimal_loss = loss_mse
 			z_hat = zs[i]
 
