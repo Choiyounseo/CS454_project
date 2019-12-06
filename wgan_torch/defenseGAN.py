@@ -59,6 +59,7 @@ def load_classifier(version):
 		classifier = ClassifierC()
 		classifier.load_state_dict(torch.load(classifier_weight_path + '_c.pt', map_location=device)['model'])
 
+	classifier.eval()
 	return classifier
 
 def main():
