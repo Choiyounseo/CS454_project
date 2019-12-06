@@ -19,9 +19,9 @@ from defenseGanGD import defensegan_gd
 # Hyper parameters
 params = {
 	'input_size': 28,  # image size 1x64x64
-	'r': 50,   # population size
+	'r': 10,   # population size
 	'L': 200,  # number of iterations
-	'lr': 500,  # learning rate
+	'lr': 10,  # learning rate
 	'nc': 1,  # number of channels
 	'nz': 100,  # size of z latent vector
 	'ngf': 64,  # size of feature maps in generator
