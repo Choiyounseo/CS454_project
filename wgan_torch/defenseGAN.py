@@ -30,9 +30,9 @@ params = {
 
 model_weight_path = './data/weights/netG_12500.pth'
 classifier_weight_path = './classifiers/checkpoint'
-classifier_model_version = 'C'
+classifier_model_version = 'A'
 
-fgsm_image_path = './data/classifier_c_fgsm_small_sample/*.pt'
+fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 netG = None
@@ -48,18 +48,18 @@ def imshow(img):
 	plt.show()
 
 def load_classifier(version):
-    classifier = None
-    if (version == 'A'):
-        classifier = ClassifierA()
-        ckpt_path = '_a.pt'
-    elif (version == 'B'):
-        classifier = ClassifierB()
-        ckpt_path = '_b.pt'
-    elif (version == 'C'):
-        classifier = ClassifierC()
-        ckpt_path = '_c.pt'
-    
-    classifier.load_state_dict(torch.load(classifier_weight_path + ckpt_path, map_location=device)['model'])
+	classifier = None
+	if (version == 'A'):
+		classifier = ClassifierA()
+		classifier.load_state_dict(torch.load(classifier_weight_path + '_a.pt', map_location=device))
+	elif (version == 'B'):
+		classifier = ClassifierB()
+		classifier.load_state_dict(torch.load(classifier_weight_path + '_b.pt', map_location=device)['model'])
+	elif (version == 'C'):
+		classifier = ClassifierC()
+		classifier.load_state_dict(torch.load(classifier_weight_path + '_c.pt', map_location=device)['model'])
+
+	return classifier
 
 def main():
 	# Generator(ngpu, nc, nz, ngf)
@@ -90,22 +90,21 @@ def main():
 		# imshow(fgsm_image)
 
 		# do defense gan
-		result_image = defensegan_ga(fgsm_image, params, netG)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
+		result_image = defensegan_gd(fgsm_image, params, netG)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
 
 		# to classify image
 		outputs_defense_gan = classifier(result_image)
 		outputs_classifier = classifier(fgsm_image.view(1, 1, params['input_size'], params['input_size']))
 		prediction_defense_gan = torch.max(outputs_defense_gan.data, 1)[1]
 		prediction_classifier = torch.max(outputs_classifier.data, 1)[1]
-		
 
 		print('defense gan classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
 			  ') as ' + str(prediction_defense_gan.item()))
-		print('classifier a classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
+		print('classifier classified fgsm image (' + str(ground_truth) + ' to ' + str(fgsm_truth) +
 			  ') as ' + str(prediction_classifier.item()))
 		epsilon_index = epsilon_set.index(epsilon)  # returns the index of epsilon from epsilon_set
 		total[epsilon_index] += 1
-        
+
 		if prediction_defense_gan.item() == ground_truth:
 			print('prediction from defense gan correct!')
 			correct_defense_gan[epsilon_index] += 1
@@ -114,10 +113,10 @@ def main():
 			correct_classifier[epsilon_index] += 1
 		print()
 		# break
-    
+
 	print('total # images for each epsilon : ' + str(total))
 	print('correct defense gan : ' + str(correct_defense_gan))
-	print('correct classifier a : ' + str(correct_classifier))
+	print('correct classifier : ' + str(correct_classifier))
 
 if __name__ == "__main__":
 	main()
