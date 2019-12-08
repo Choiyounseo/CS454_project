@@ -169,19 +169,19 @@ def defensegan_ga(z_array):
 
 	return [z for z in pop]
 
-netG = Generator(params['ngpu'], params['nc'], params['nz'], params['ngf'])
-netG.load_state_dict(torch.load('./data/weights/netG_12500.pth', map_location=torch.device('cpu')))
-transform = transforms.Compose([transforms.ToTensor()])
+if __name__ == "__main__":
+	netG = Generator(params['ngpu'], params['nc'], params['nz'], params['ngf'])
+	netG.load_state_dict(torch.load('./data/weights/netG_12500.pth', map_location=torch.device('cpu')))
+	transform = transforms.Compose([transforms.ToTensor()])
 
-file_path = '../GD/data/fgsm_images/0.3_8_to_5_84.pt'
+	file_path = '../GD/data/fgsm_images/0.3_8_to_5_84.pt'
 
-fgsm_image = torch.load(file_path)[0]
+	fgsm_image = torch.load(file_path)[0]
 
-z_array = []
-for i in range(params['r']):
-	z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
+	z_array = []
+	for i in range(params['r']):
+		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
 
-for i in range(params['L']):
-	z_array = defensegan_ga(z_array)
-	z_array, _ = defensegan_gd(z_array, i%20==0)
-
+	for i in range(params['L']):
+		z_array = defensegan_ga(z_array)
+		z_array, _ = defensegan_gd(z_array, i%20==0)
