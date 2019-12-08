@@ -5,6 +5,7 @@ from torch import nn
 from model import Generator
 import random
 from deap import creator, base, tools
+from matplotlib import pyplot as plt
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Hyper parameters
@@ -19,7 +20,18 @@ params = {
 	'ngpu': 1,  # number of GPU
 }
 
-def defensegan_gd(z_array):
+def imshow_images(rec_rr, zs, netG):
+	fig = plt.figure()
+	for i in range(rec_rr):
+		img = netG(zs[i]).detach()
+		img = (img + 1) / 2
+		img = img.squeeze()
+		np_img = img.numpy()
+		ax = fig.add_subplot(1,rec_rr,i+1)
+		ax.imshow(np_img)
+	plt.show()
+
+def defensegan_gd(z_array, print_debug=False):
 	optimal_loss = None
 	z_hat = None
 	zs = []
@@ -40,6 +52,9 @@ def defensegan_gd(z_array):
 			optimal_loss = loss_mse
 			z_hat = zs[i]
 
+	if print_debug:
+		imshow_images(params['r'], zs, netG)
+
 	print(optimal_loss)
 
 	return [z.detach().numpy().reshape(params['nz'], 1, 1) for z in zs], netG(z_hat)
@@ -58,26 +73,31 @@ def defensegan_ga(z_array):
 	creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 	creator.create("Individual", np.ndarray, fitness=creator.FitnessMin)  # minimizing the fitness value
 	toolbox = base.Toolbox()
-	CXPB, MUTPB = 0.4, 0.2
+	CXPB, MUTPB = 0.95, 0.05
 	toolbox.register("attr_float", random.random)
 	toolbox.register("individual", initIndividual, creator.Individual)
 	toolbox.register("population", initPopulation, list, toolbox.individual)
 	toolbox.register("evaluate", evalFunc)
 	toolbox.register("mate", tools.cxUniform, indpb=0.1)
 	toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
-	toolbox.register("select", tools.selTournament, tournsize=3)
+	toolbox.register("select", tools.selRoulette)
 
 	random.seed(777)
 
 	# pop = toolbox.population(n=POPULATION)
 	pop = toolbox.population()
 
-	print("Start of evolution")
+	# print("Start of evolution")
 
 	# Evaluate the entire population
 	# print(fitnesses) -> [(84,), (105,), (96,), (104,), (94,),  ... ] 이런식으로 저장됨.
 	fitnesses = list(map(toolbox.evaluate, pop))
+	minfit = 1000000.0
+	elit = None
 	for ind, fit in zip(pop, fitnesses):
+		if fit[0] < minfit:
+			minfit = fit[0]
+			elit = ind
 		ind.fitness.values = fit
 
 	# Extracting all the fitnesses of
@@ -86,10 +106,10 @@ def defensegan_ga(z_array):
 
 	# Select the next generation individuals
 	# len(pop) -> 50, len(pop[0]) -> 5
-	offspring = toolbox.select(pop, len(pop))
+	offspring = toolbox.select(pop, len(pop)-1)
 
 	# Clone the selected individuals
-	offspring = list(map(toolbox.clone, offspring))
+	offspring = [elit] + list(map(toolbox.clone, offspring))
 
 	# Apply crossover and mutation on the offspring
 	'''
@@ -117,6 +137,9 @@ def defensegan_ga(z_array):
 
 	for child1, child2 in zip(offspring[::2], offspring[1::2]):
 		if random.random() < CXPB:
+			toolbox.mate(child1, child2)
+			toolbox.mate(child1, child2)
+			toolbox.mate(child1, child2)
 			toolbox.mate(child1, child2)
 			del child1.fitness.values
 			del child2.fitness.values
@@ -160,5 +183,5 @@ for i in range(params['r']):
 
 for i in range(params['L']):
 	z_array = defensegan_ga(z_array)
-	z_array, _ = defensegan_gd(z_array)
+	z_array, _ = defensegan_gd(z_array, i%20==0)
 
