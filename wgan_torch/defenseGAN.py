@@ -15,6 +15,7 @@ import torchvision.transforms.functional as TF
 import os
 from defenseGanGA import defensegan_ga
 from defenseGanGD import defensegan_gd
+from memeticGA import defensegan_memetic_ga
 
 # Hyper parameters
 params = {
@@ -33,6 +34,8 @@ classifier_weight_path = './classifiers/checkpoint'
 classifier_model_version = 'A'
 
 fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
+# fgsm_image_path = './data/classifier_b_fgsm_small_tensors/*.pt'
+# fgsm_image_path = './data/classifier_c_fgsm_sample/*.pt'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 netG = None
@@ -91,7 +94,7 @@ def main():
 		# imshow(fgsm_image)
 
 		# do defense gan
-		result_image = defensegan_gd(fgsm_image, params, netG)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
+		result_image = defensegan_memetic_ga(fgsm_image, params, netG)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
 
 		# to classify image
 		outputs_defense_gan = classifier(result_image)

@@ -31,7 +31,7 @@ def imshow_images(rec_rr, zs, netG):
 		ax.imshow(np_img)
 	plt.show()
 
-def defensegan_gd(z_array, print_debug=False):
+def defensegan_gd(fgsm_image, params, netG, z_array, print_debug=False):
 	optimal_loss = None
 	z_hat = None
 	zs = []
@@ -55,11 +55,11 @@ def defensegan_gd(z_array, print_debug=False):
 	if print_debug:
 		imshow_images(params['r'], zs, netG)
 
-	print(optimal_loss)
+	# print(optimal_loss)
 
 	return [z.detach().numpy().reshape(params['nz'], 1, 1) for z in zs], netG(z_hat)
 
-def defensegan_ga(z_array):
+def defensegan_ga(fgsm_image, params, netG, z_array):
 	initial_population = torch.tensor(np.asarray(z_array), device=device)
 	initial_population = initial_population.view(params['r'], params['nz']).numpy()
 	def evalFunc(individual):
@@ -165,9 +165,21 @@ def defensegan_ga(z_array):
 	mean = sum(fits) / length
 	sum2 = sum(x * x for x in fits)
 	std = abs(sum2 / length - mean ** 2) ** 0.5
-	print("mean:{}, std:{}\n".format(mean, std))
+	# print("mean:{}, std:{}\n".format(mean, std))
 
 	return [z for z in pop]
+
+def defensegan_memetic_ga(x, params, netG):
+	z_array = []
+	for i in range(params['r']):
+		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
+
+	result = None
+	for i in range(params['L']):
+		z_array = defensegan_ga(x, params, netG, z_array)
+		z_array, result = defensegan_gd(x, params, netG, z_array)
+
+	return result
 
 if __name__ == "__main__":
 	netG = Generator(params['ngpu'], params['nc'], params['nz'], params['ngf'])
@@ -178,10 +190,4 @@ if __name__ == "__main__":
 
 	fgsm_image = torch.load(file_path)[0]
 
-	z_array = []
-	for i in range(params['r']):
-		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
-
-	for i in range(params['L']):
-		z_array = defensegan_ga(z_array)
-		z_array, _ = defensegan_gd(z_array, i%20==0)
+	defensegan_memetic_ga(fgsm_image, params, netG)
