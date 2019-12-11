@@ -3,6 +3,7 @@
 ## What we implemented
 DefenseGAN using **Genetic Algorithm(GA)**, instead of Gradient descent(GD)
 
+
 ## How to execute
 ### Fast way
 The easiest way to execute GA + DefenseGAN is to run 'wgan_torch/defenseGAN.py'. All you need to change in file is one line whether to run wGAN with GD or GA. We provides some checkpoints we used to train necessary models. Run in the root of your project: 
@@ -13,6 +14,7 @@ The easiest way to execute GA + DefenseGAN is to run 'wgan_torch/defenseGAN.py'.
 >> pip install -r requirements.txt
 >> python defenseGan.py
 ```
+
 
 ### Follow from bottom to top
 #### 1. Train basic classifier models
@@ -31,6 +33,7 @@ To skip this step, just use provided FGSM images of each model. You can get each
 #### 4. wGAN + (GA or GD)
 Follow the above **Fast way** section explanation.
 
+
 ## Result
 #### Gradient Descent
 | Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
@@ -46,17 +49,19 @@ Follow the above **Fast way** section explanation.
 | Classifier B | - | - | - | - |
 | Classifier C | - | - | - | - |
 
+
 ## DEAP for GA
 DEAP version == 1.3.0
 
+
 ## Related works
 ### DefenseGAN
-You can read DefenseGAN paper in here [link](https://arxiv.org/pdf/1805.06605.pdf)
+- You can read DefenseGAN paper in here [link](https://arxiv.org/pdf/1805.06605.pdf)
+- You can also see codes in github repository [link](https://github.com/kabkabm/defensegan)
 
-You can also see codes in github repository [link](https://github.com/kabkabm/defensegan)
 
 ### FGSM (Fast Gradient Signed Method)
-You can easily follow FGSM with pytorch from here [link](https://pytorch.org/tutorials/beginner/fgsm_tutorial.html)
+- You can easily follow FGSM with pytorch from here [link](https://pytorch.org/tutorials/beginner/fgsm_tutorial.html)
 
 ## Contributors
 
