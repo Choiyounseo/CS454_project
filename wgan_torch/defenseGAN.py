@@ -83,7 +83,9 @@ def main():
 	correct_classifier = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
 	i = 1
-	for file_path in glob.glob(fgsm_image_path).sort():  # fgsm images from classifier a (fgsm_images_a)
+	file_paths = glob.glob(fgsm_image_path)
+	file_paths.sort()
+	for file_path in file_paths:  # fgsm images from classifier a (fgsm_images_a)
 		print(i)
 		i += 1
 
