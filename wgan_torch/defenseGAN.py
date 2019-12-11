@@ -82,7 +82,11 @@ def main():
 	correct_defense_gan = [0] * 6  # number of fgsm images correctly classified for each epsilon by defense gan
 	correct_classifier = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
-	for file_path in glob.glob(fgsm_image_path):  # fgsm images from classifier a (fgsm_images_a)
+	i = 1
+	for file_path in glob.glob(fgsm_image_path).sort():  # fgsm images from classifier a (fgsm_images_a)
+		print(i)
+		i += 1
+
 		# get epsilon and ground truth by parsing
 		file_name = file_path.split('/')[-1].split('_')
 		epsilon = float(file_name[0])
