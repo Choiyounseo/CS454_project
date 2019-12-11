@@ -22,7 +22,7 @@ You can also see codes in github repository [link](https://github.com/kabkabm/de
 #### Memetic Genetic Algorithm
 | Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
 | --- | --- | --- | --- | --- |
-| Classifier A | - | - | - | - |
+| Classifier A | 74/100 | 76/100 | 81/100 | 77% |
 | Classifier B | - | - | - | - |
 | Classifier C | - | - | - | - |
 
