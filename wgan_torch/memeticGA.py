@@ -120,7 +120,7 @@ def defensegan_ga(fgsm_image, params, netG, z_array):
 	# want to customize mutation method... there is no proper mutation operator in deap.tools...
 
 	for child1, child2 in zip(offspring[::2], offspring[1::2]):
-		if random.random() < CXPB:
+		if random.random() < MUTPB:
 			size = min(len(child1), len(child2))
 			for i in range(5):
 				cxpoint = random.randint(2, size - 1)
