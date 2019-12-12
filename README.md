@@ -47,7 +47,7 @@ Follow the above **Fast way** section explanation.
 | --- | --- | --- | --- | --- |
 | Classifier A | 74/100 | 76/100 | 81/100 | 77% |
 | Classifier B | - | - | - | - |
-| Classifier C | - | - | - | - |
+| Classifier C | 75/100 | 76/100 | 77/100 | 76% |
 
 
 ## DEAP for GA
