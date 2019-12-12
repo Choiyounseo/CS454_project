@@ -35,19 +35,19 @@ Follow the above **Fast way** section explanation.
 
 
 ## Result
-#### Gradient Descent
+#### Gradient Descent (Population: 10, Iteration: 200)
 | Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
 | --- | --- | --- | --- | --- |
-| Classifier A | 88/100 | 93/100 | 89/100 | 90% |
-| Classifier B | 78/100 | 90/100 | 87/100 | 85% |
-| Classifier C | 79/100 | 87/100 | 86/100 | 84% |
+| Classifier A + Data A | 88/100 | 93/100 | 89/100 | 90% |
+| Classifier B + Data B | 78/100 | 90/100 | 87/100 | 85% |
+| Classifier C + Data C | 79/100 | 87/100 | 86/100 | 84% |
 
-#### Memetic Genetic Algorithm
+#### Memetic Genetic Algorithm (Population: 10, Iteration: 400(GD+GA))
 | Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
 | --- | --- | --- | --- | --- |
-| Classifier A | 74/100 | 76/100 | 81/100 | 77% |
-| Classifier B | - | - | - | - |
-| Classifier C | 75/100 | 76/100 | 77/100 | 76% |
+| Classifier A + Data A| 74/100 | 76/100 | 81/100 | 77% |
+| Classifier B + Data B | 63/100 | 73/100 | 82/100 | 72.67% |
+| Classifier C + Data C | 75/100 | 76/100 | 77/100 | 76% |
 
 
 ## DEAP for GA
