@@ -66,7 +66,7 @@ def defensegan_ga(x, params, netG, observation_change=False, observation_step=10
 
 		# Select the next generation individuals
 		# len(pop) -> 50, len(pop[0]) -> 5
-		offspring = toolbox.select(pop, len(pop)-1)
+        offspring = toolbox.select(pop, len(pop)-1)
 
         # Clone the selected individuals
         offspring = [elit] + list(map(toolbox.clone, offspring))
@@ -137,7 +137,7 @@ def defensegan_ga(x, params, netG, observation_change=False, observation_step=10
             gen_image = netG(z)
             # imshow(gen_image.detach())
 
-	print("-- End of (successful) evolution --")
+    print("-- End of (successful) evolution --")
 
 	best_ind = tools.selBest(pop, 1)[0]
 	z = torch.from_numpy(best_ind).view(1, 100, 1, 1)
