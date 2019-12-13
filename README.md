@@ -48,11 +48,11 @@ Alternate GD with GA.
 - generation : default value is 200. Also tried various number of generation as parameter
 
 #### 3. Memetic GA
-Use GA with 100 generation - other hyperparamter or methods are same as above GA, and then iterate GD 100 times. Total iteration is 200.
-
-#### 4. GA and GD
 Iterate 100 times for (GA+GD). This will run like GA-GD-GA-GD-GA-GD...
 Total iteration is 200. (100 times with GA and 100 times with GD)
+
+#### 4. GA and GD
+Use GA with 100 generation - other hyperparamter or methods are same as above GA, and then iterate GD 100 times. Total iteration is 200.
 
 ## Result
 We experience with 2 threat levels: white- and black-box attacks.
