@@ -8,14 +8,9 @@ from model import Generator
 from classifiers.a import ClassifierA
 from classifiers.b import ClassifierB
 from classifiers.c import ClassifierC
-from torch.autograd import Variable
 import glob
-from torchvision import datasets, transforms
-import torchvision.transforms.functional as TF
-import os
-from defenseGanGA import defensegan_ga
-from defenseGanGD import defensegan_gd
-from memeticGA import defensegan_memetic_ga
+from torchvision import transforms
+from defenseGAN_method import defensegan_memetic_ga, defensegan_ga_gd, defensegan_ga, defensegan_gd
 
 # Hyper parameters
 params = {
@@ -31,13 +26,14 @@ params = {
 
 model_weight_path = './data/weights/netG_12500.pth'
 classifier_weight_path = './classifiers/checkpoint'
-classifier_model_version = 'A'
+classifier_model_version = 'B'
 
-fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
-# fgsm_image_path = './data/classifier_b_fgsm_small_tensors/*.pt'
-# fgsm_image_path = './data/classifier_c_fgsm_sample/*.pt'
+#fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
+fgsm_image_path = './data/classifier_b_fgsm_small_tensors/*.pt'
+#fgsm_image_path = './data/classifier_c_fgsm_sample/*.pt'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 netG = None
 
 # transform
@@ -86,11 +82,12 @@ def main():
 	file_paths = glob.glob(fgsm_image_path)
 	file_paths.sort()
 	for file_path in file_paths:  # fgsm images from classifier a (fgsm_images_a)
-		print(i)
+		print('file number : ' + str(i))
 		i += 1
 
 		# get epsilon and ground truth by parsing
-		file_name = file_path.split('/')[-1].split('_')
+		file_name = file_path.split('\\')[-1].split('_')
+		print(file_name)
 		epsilon = float(file_name[0])
 		ground_truth = float(file_name[1])
 		fgsm_truth = float(file_name[3])
@@ -99,8 +96,16 @@ def main():
 		fgsm_image = torch.load(file_path)[0]
 		# imshow(fgsm_image)
 
-		# do defense gan
-		result_image = defensegan_memetic_ga(fgsm_image, params, netG)  # return type tensor [1, 1, 28, 28]. image G(z) that has minimum fitness
+		''' YOU CAN PICK ONE OF THOSE METHODS BELOW. THOSE ARE FROM defenseGAN_method.py 
+		1. defensegan_memetic_ga : 100 GA + 100 GD (alternatively)
+		2. defensegan_ga_ga      : 100 GA + 100 GD (in order)
+		3. defensegan_ga         : 200 GA
+		4. defensegan_gd         : 200 GD   
+		'''
+		#result_image, total_time = defensegan_memetic_ga(fgsm_image, params, netG)
+		#result_image, total_time = defensegan_ga_gd(fgsm_image, params, netG)
+		#result_image, total_time = defensegan_ga(fgsm_image, params, netG)
+		result_image, total_time = defensegan_gd(fgsm_image, params, netG)
 
 		# to classify image
 		outputs_defense_gan = classifier(result_image)
@@ -122,11 +127,13 @@ def main():
 			print('prediction from classifier correct! - this should not happen...')
 			correct_classifier[epsilon_index] += 1
 		print()
-		# break
+		break
 
 	print('total # images for each epsilon : ' + str(total))
 	print('correct defense gan : ' + str(correct_defense_gan))
 	print('correct classifier : ' + str(correct_classifier))
+	time_rest = total_time % 3600
+	print('total time for this method : %.0fh %.0fm %.0fs' % (total_time // 3600, time_rest // 60, time_rest % 60))
 
 if __name__ == "__main__":
 	main()
