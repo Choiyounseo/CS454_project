@@ -48,10 +48,11 @@ Alternate GD with GA.
 - generation : default value is 200. Also tried various number of generation as parameter
 
 #### 3. Memetic GA
-Use GA with 100 generation - other hyperparamter or methods are same as above GA, and then iterate GD 100 times.
+Use GA with 100 generation - other hyperparamter or methods are same as above GA, and then iterate GD 100 times. Total iteration is 200.
 
 #### 4. GA and GD
 Iterate 100 times for (GA+GD). This will run like GA-GD-GA-GD-GA-GD...
+Total iteration is 200. (100 times with GA and 100 times with GD)
 
 ## Result
 We experience with 2 threat levels: white- and black-box attacks.
@@ -66,15 +67,15 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | A | A | GD | 10 | 200 | 88/100 | 93/100 | 89/100 | 90% |
 | B | B | GD | 10 | 200 | 78/100 | 90/100 | 87/100 | 85% |
 | C | C | GD | 10 | 200 | 79/100 | 87/100 | 86/100 | 84% |
-| A | A | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
-| B | B | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
-| C | C | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
-| A | A | GA and GD | 10 | 200(GA + GD) | 70/100 | 80/100 | 82/100 | 77.33% |
-| B | B | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
-| C | C | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | A | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
 | B | B | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
 | C | C | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| A | A | Memetic GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| B | B | Memetic GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| C | C | Memetic GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| A | A | GA and GD | 10 | 200 | 70/100 | 80/100 | 82/100 | 77.33% |
+| B | B | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| C | C | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
 
 ## Result 2 : black-box attack
 
@@ -82,18 +83,18 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | C | A | - | 10 | 200 | 32/100 | 37/100 | 22/100 | 30.33% |
 | C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
-| C | A | Memetic GA | 10 | 200(GA + GD) | 61/100 | 70/100 | 73/100 | 68% |
-| C | A | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | C | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| C | A | Memetic GA | 10 | 200 | 61/100 | 70/100 | 73/100 | 68% |
+| C | A | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
 
 ## Result 3 : other trials..
 | Classifier | Data | Method | Population | Iteration | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| A | A | Memetic GA | 10 | 400(GA + GD) | 74/100 | 76/100 | 81/100 | 77% |
-| B | B | Memetic GA | 10 | 400(GA + GD) | 63/100 | 73/100 | 82/100 | 72.67% |
-| C | C | Memetic GA | 10 | 400(GA + GD) | 75/100 | 76/100 | 77/100 | 76% |
-| C | A | Memetic GA | 30 | 200(GA + GD) | 65/100 | 76/100 | 79/100 | 73.33% |
-| C | A | Memetic GA | 10 | 600(GA + GD) | 65/100 | 74/100 | 76/100 | 71.67% |
+| A | A | Memetic GA | 10 | 400 | 74/100 | 76/100 | 81/100 | 77% |
+| B | B | Memetic GA | 10 | 400 | 63/100 | 73/100 | 82/100 | 72.67% |
+| C | C | Memetic GA | 10 | 400 | 75/100 | 76/100 | 77/100 | 76% |
+| C | A | Memetic GA | 30 | 200 | 65/100 | 76/100 | 79/100 | 73.33% |
+| C | A | Memetic GA | 10 | 600 | 65/100 | 74/100 | 76/100 | 71.67% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
