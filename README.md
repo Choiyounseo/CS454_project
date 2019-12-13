@@ -6,7 +6,7 @@ DefenseGAN using **Genetic Algorithm(GA)**, instead of Gradient descent(GD)
 
 ## How to execute
 ### Fast way
-The easiest way to execute GA + DefenseGAN is to run 'wgan_torch/defenseGAN.py'. All you need to change in file is one line whether to run wGAN with GD or GA. We provides some checkpoints we used to train necessary models. Run in the root of your project: 
+The easiest way to execute GA + DefenseGAN is to run 'wgan_torch/defenseGAN.py'. All you need to change in file is one line whether to run wGAN with GD or GA. We provides some checkpoints we used to train necessary models. Run in the root of your project:
 ```
 >> cd wgan_torch
 >> virtualenv -p python3 venv  (python version with 3.6 or 3.7 are all possible)
@@ -35,20 +35,19 @@ Follow the above **Fast way** section explanation.
 
 
 ## Result
-#### Gradient Descent (Population: 10, Iteration: 200)
-| Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
-| --- | --- | --- | --- | --- |
-| Classifier A + Data A | 88/100 | 93/100 | 89/100 | 90% |
-| Classifier B + Data B | 78/100 | 90/100 | 87/100 | 85% |
-| Classifier C + Data C | 79/100 | 87/100 | 86/100 | 84% |
-
-#### Memetic Genetic Algorithm (Population: 10, Iteration: 400(GD+GA))
-| Type | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
-| --- | --- | --- | --- | --- |
-| Classifier A + Data A| 74/100 | 76/100 | 81/100 | 77% |
-| Classifier B + Data B | 63/100 | 73/100 | 82/100 | 72.67% |
-| Classifier C + Data C | 75/100 | 76/100 | 77/100 | 76% |
-
+| Classifier | Data | Method | Population | Iteration | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A | A | GD | 10 | 200 | 88/100 | 93/100 | 89/100 | 90% |
+| B | B | GD | 10 | 200 | 78/100 | 90/100 | 87/100 | 85% |
+| C | C | GD | 10 | 200 | 79/100 | 87/100 | 86/100 | 84% |
+| A | A | Memetic GA | 10 | 400(GD + GA) | 74/100 | 76/100 | 81/100 | 77% |
+| B | B | Memetic GA | 10 | 400(GD + GA) | 63/100 | 73/100 | 82/100 | 72.67% |
+| C | C | Memetic GA | 10 | 400(GD + GA) | 75/100 | 76/100 | 77/100 | 76% |
+| C | A | - | 10 | 200 | 32/100 | 37/100 | 22/100 | 30.33% |
+| C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
+| C | A | Memetic GA | 10 | 200(GD + GA) | 61/100 | 70/100 | 73/100 | 68% |
+| C | A | Memetic GA | 10 | 600(GD + GA) | -/100 | -/100 | -/100 | -% |
+| C | A | Memetic GA | 10 | 600(GD + GA) | -/100 | -/100 | -/100 | -% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
