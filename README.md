@@ -56,8 +56,8 @@ Follow the above **Fast way** section explanation.
 | C | A | - | 10 | 200 | 32/100 | 37/100 | 22/100 | 30.33% |
 | C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
 | C | A | Memetic GA | 10 | 200(GA + GD) | 61/100 | 70/100 | 73/100 | 68% |
-| C | A | Memetic GA | 30 | 200(GA + GD) | 65/100 | 76/100 | 79/100 | 73.33% |
-| C | A | Memetic GA | 10 | 600(GA + GD) | 65/100 | 74/100 | 76/100 | 71.67% |
+| C | A | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
+| C | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
 
 ## Result 3
 | Classifier | Data | Method | Population | Iteration | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
@@ -65,6 +65,8 @@ Follow the above **Fast way** section explanation.
 | A | A | Memetic GA | 10 | 400(GA + GD) | 74/100 | 76/100 | 81/100 | 77% |
 | B | B | Memetic GA | 10 | 400(GA + GD) | 63/100 | 73/100 | 82/100 | 72.67% |
 | C | C | Memetic GA | 10 | 400(GA + GD) | 75/100 | 76/100 | 77/100 | 76% |
+| C | A | Memetic GA | 30 | 200(GA + GD) | 65/100 | 76/100 | 79/100 | 73.33% |
+| C | A | Memetic GA | 10 | 600(GA + GD) | 65/100 | 74/100 | 76/100 | 71.67% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
