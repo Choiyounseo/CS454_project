@@ -46,8 +46,8 @@ Follow the above **Fast way** section explanation.
 | C | A | - | 10 | 200 | 32/100 | 37/100 | 22/100 | 30.33% |
 | C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
 | C | A | Memetic GA | 10 | 200(GD + GA) | 61/100 | 70/100 | 73/100 | 68% |
-| C | A | Memetic GA | 10 | 600(GD + GA) | -/100 | -/100 | -/100 | -% |
-| C | A | Memetic GA | 10 | 600(GD + GA) | -/100 | -/100 | -/100 | -% |
+| C | A | Memetic GA | 30 | 200(GD + GA) | 65/100 | 76/100 | 79/100 | 73.33% |
+| C | A | Memetic GA | 10 | 600(GD + GA) | 65/100 | 74/100 | 76/100 | 71.67% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
