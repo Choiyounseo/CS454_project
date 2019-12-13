@@ -6,66 +6,66 @@ import numpy as np
 from deap import creator, base, tools, algorithms
 
 def defensegan_ga(x, params, netG, observation_change=False, observation_step=100):
-	x = x.view(28, 28).detach().numpy().astype(np.float64)
-	initial_population = torch.FloatTensor(params['r'], params['nz'], 1, 1).normal_(0, 1)
-	initial_population = initial_population.view(params['r'], params['nz']).numpy()
-	def evalFunc(individual):
-		individual = torch.from_numpy(individual).view(1, params['nz'], 1, 1)
-		fitness = np.linalg.norm(netG(individual).view(28, 28).detach().numpy() - x, ord=2) ** 2,
-		return fitness
-	def initIndividual(icls, content):
-		return icls(content)
-	def initPopulation(pcls, ind_init):
-		return pcls(ind_init(c) for c in initial_population)
-	creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-	creator.create("Individual", np.ndarray, fitness=creator.FitnessMin)  # minimizing the fitness value
+    x = x.view(28, 28).detach().numpy().astype(np.float64)
+    initial_population = torch.FloatTensor(params['r'], params['nz'], 1, 1).normal_(0, 1)
+    initial_population = initial_population.view(params['r'], params['nz']).numpy()
+    def evalFunc(individual):
+        individual = torch.from_numpy(individual).view(1, params['nz'], 1, 1)
+        fitness = np.linalg.norm(netG(individual).view(28, 28).detach().numpy() - x, ord=2) ** 2,
+        return fitness
+    def initIndividual(icls, content):
+        return icls(content)
+    def initPopulation(pcls, ind_init):
+        return pcls(ind_init(c) for c in initial_population)
+    creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+    creator.create("Individual", np.ndarray, fitness=creator.FitnessMin)  # minimizing the fitness value
 
-	IND_SIZE = params['nz']
-	POPULATION = params['r']
-	GENERATIONS = params['L']
+    IND_SIZE = params['nz']
+    POPULATION = params['r']
+    GENERATIONS = params['L']
 
-	CXPB, MUTPB1, MUTPB2 = 0.7, 0.2, 0.05
-    
-	toolbox = base.Toolbox()
-	toolbox.register("attr_float", random.random)
-	toolbox.register("individual", initIndividual, creator.Individual)
-	toolbox.register("population", initPopulation, list, toolbox.individual)
-	toolbox.register("evaluate", evalFunc)
-	toolbox.register("mate", tools.cxUniform, indpb=0.1)
-	toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
-	toolbox.register("select", tools.selRoulette)
+    CXPB, MUTPB1, MUTPB2 = 0.7, 0.2, 0.05
 
-	random.seed(777)
+    toolbox = base.Toolbox()
+    toolbox.register("attr_float", random.random)
+    toolbox.register("individual", initIndividual, creator.Individual)
+    toolbox.register("population", initPopulation, list, toolbox.individual)
+    toolbox.register("evaluate", evalFunc)
+    toolbox.register("mate", tools.cxUniform, indpb=0.1)
+    toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
+    toolbox.register("select", tools.selRoulette)
 
-	# pop = toolbox.population(n=POPULATION)
-	pop = toolbox.population()
+    random.seed(777)
 
-	print("Start of evolution")
+    # pop = toolbox.population(n=POPULATION)
+    pop = toolbox.population()
 
-	# Evaluate the entire population
-	# print(fitnesses) -> [(84,), (105,), (96,), (104,), (94,),  ... ] 이런식으로 저장됨.
-	fitnesses = list(map(toolbox.evaluate, pop))
-	minfit = 1000000.0
-	elit = None
-	for ind, fit in zip(pop, fitnesses):
-		if fit[0] < minfit:
-			minfit = fit[0]
-			elit = ind
-		ind.fitness.values = fit
+    print("Start of evolution")
 
-	# Extracting all the fitnesses of
-	fits = [ind.fitness.values[0] for ind in pop]
+    # Evaluate the entire population
+    # print(fitnesses) -> [(84,), (105,), (96,), (104,), (94,),  ... ] 이런식으로 저장됨.
+    fitnesses = list(map(toolbox.evaluate, pop))
+    minfit = 1000000.0
+    elit = None
+    for ind, fit in zip(pop, fitnesses):
+        if fit[0] < minfit:
+            minfit = fit[0]
+            elit = ind
+        ind.fitness.values = fit
 
-	# Variable keeping track of the number of generations
-	g = 0
+    # Extracting all the fitnesses of
+    fits = [ind.fitness.values[0] for ind in pop]
 
-	# Begin the evolution
-	while min(fits) > 10 and g < GENERATIONS:
-		# A new generation
-		g = g + 1
+    # Variable keeping track of the number of generations
+    g = 0
 
-		# Select the next generation individuals
-		# len(pop) -> 50, len(pop[0]) -> 5
+    # Begin the evolution
+    while min(fits) > 10 and g < GENERATIONS:
+        # A new generation
+        g = g + 1
+
+        # Select the next generation individuals
+        # len(pop) -> 50, len(pop[0]) -> 5
         offspring = toolbox.select(pop, len(pop)-1)
 
         # Clone the selected individuals
@@ -139,8 +139,8 @@ def defensegan_ga(x, params, netG, observation_change=False, observation_step=10
 
     print("-- End of (successful) evolution --")
 
-	best_ind = tools.selBest(pop, 1)[0]
-	z = torch.from_numpy(best_ind).view(1, 100, 1, 1)
-	gen_image = netG(z)
-	# imshow(gen_image.detach())
-	return gen_image
+    best_ind = tools.selBest(pop, 1)[0]
+    z = torch.from_numpy(best_ind).view(1, 100, 1, 1)
+    gen_image = netG(z)
+    # imshow(gen_image.detach())
+    return gen_image
