@@ -74,7 +74,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | B | B | Memetic GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
 | C | C | Memetic GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
 | A | A | GA and GD | 10 | 200 | 70/100 | 80/100 | 82/100 | 77.33% |
-| B | B | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| B | B | GA and GD | 10 | 200 | 71/100 | 78/100 | 83/100 | 77.33% |
 | C | C | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
 
 ## Result 2 : black-box attack
