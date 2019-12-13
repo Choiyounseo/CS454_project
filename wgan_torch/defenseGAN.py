@@ -10,12 +10,13 @@ from classifiers.b import ClassifierB
 from classifiers.c import ClassifierC
 import glob
 from torchvision import transforms
-from defenseGAN_method import defensegan_memetic_ga, defensegan_ga_gd, defensegan_ga, defensegan_gd
+from defenseGAN_method import defensegan_ga_gd, defensegan_ga, defensegan_gd
 
 # Hyper parameters
 params = {
 	'input_size': 28,  # image size 1x64x64
-	'r': 10,   # population size
+	'p': 50,   # population size for GA
+	'r': 10,   # population size for GD
 	'L': 200,  # number of iterations
 	'lr': 10,  # learning rate
 	'nc': 1,  # number of channels
@@ -26,10 +27,10 @@ params = {
 
 model_weight_path = './data/weights/netG_12500.pth'
 classifier_weight_path = './classifiers/checkpoint'
-classifier_model_version = 'B'
+classifier_model_version = 'A'
 
-#fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
-fgsm_image_path = './data/classifier_b_fgsm_small_tensors/*.pt'
+fgsm_image_path = './data/classifier_a_fgsm_tensors/*.pt'
+#fgsm_image_path = './data/classifier_b_fgsm_small_tensors/*.pt'
 #fgsm_image_path = './data/classifier_c_fgsm_sample/*.pt'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -103,9 +104,9 @@ def main():
 		4. defensegan_gd         : 200 GD   
 		'''
 		#result_image, total_time = defensegan_memetic_ga(fgsm_image, params, netG)
-		#result_image, total_time = defensegan_ga_gd(fgsm_image, params, netG)
+		result_image, total_time = defensegan_ga_gd(fgsm_image, params, netG)
 		#result_image, total_time = defensegan_ga(fgsm_image, params, netG)
-		result_image, total_time = defensegan_gd(fgsm_image, params, netG)
+		#result_image, total_time = defensegan_gd(fgsm_image, params, netG)
 
 		# to classify image
 		outputs_defense_gan = classifier(result_image)
@@ -127,11 +128,10 @@ def main():
 			print('prediction from classifier correct! - this should not happen...')
 			correct_classifier[epsilon_index] += 1
 		print()
+		print('total # images for each epsilon : ' + str(total))
+		print('correct defense gan : ' + str(correct_defense_gan))
+		print('correct classifier : ' + str(correct_classifier))
 		break
-
-	print('total # images for each epsilon : ' + str(total))
-	print('correct defense gan : ' + str(correct_defense_gan))
-	print('correct classifier : ' + str(correct_classifier))
 	time_rest = total_time % 3600
 	print('total time for this method : %.0fh %.0fm %.0fs' % (total_time // 3600, time_rest // 60, time_rest % 60))
 

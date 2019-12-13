@@ -12,6 +12,7 @@ from GD import GD
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 
+'''
 def defensegan_memetic_ga(x, params, netG):
 	z_array = []
 	for i in range(params['r']):
@@ -27,10 +28,12 @@ def defensegan_memetic_ga(x, params, netG):
 		total_time += time
 
 	return result, total_time
+'''
+
 
 def defensegan_ga_gd(x, params, netG):
 	z_array = []
-	for i in range(params['r']):
+	for i in range(params['p']):
 		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
 
 	result = None
@@ -41,14 +44,14 @@ def defensegan_ga_gd(x, params, netG):
 		total_time += time
 
 	for i in range(int(params['L']/2)):
-		z_array, result, time = GD(x, params, netG, z_array)
+		z_array, result, time = GD(x, params, netG, z_array[:params['r']])
 		total_time += time
 
 	return result, total_time
 
 def defensegan_ga(x, params, netG):
 	z_array = []
-	for i in range(params['r']):
+	for i in range(params['p']):
 		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
 
 	result = None

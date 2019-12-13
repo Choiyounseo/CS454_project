@@ -11,10 +11,11 @@ device = torch.device('cpu')
 
 def GA(fgsm_image, params, netG, z_array):
 	initial_population = torch.tensor(np.asarray(z_array), device=device)
-	initial_population = initial_population.view(params['r'], params['nz']).numpy()
+	initial_population = initial_population.view(params['p'], params['nz']).numpy()
 	def evalFunc(individual):
 		individual = torch.from_numpy(individual).view(1, params['nz'], 1, 1)
 		fitness = np.linalg.norm(netG(individual).view(28, 28).detach().numpy() - fgsm_image.view(28, 28).detach().numpy(), ord=2) ** 2,
+		#print(fitness)
 		return fitness
 	def initIndividual(icls, content):
 		return icls(content)
@@ -23,14 +24,15 @@ def GA(fgsm_image, params, netG, z_array):
 	creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 	creator.create("Individual", np.ndarray, fitness=creator.FitnessMin)  # minimizing the fitness value
 	toolbox = base.Toolbox()
-	CXPB, MUTPB = 0.95, 0.05
+	CXPB, MUTPB = 0.4, 0.2
 	toolbox.register("attr_float", random.random)
 	toolbox.register("individual", initIndividual, creator.Individual)
 	toolbox.register("population", initPopulation, list, toolbox.individual)
 	toolbox.register("evaluate", evalFunc)
 	toolbox.register("mate", tools.cxUniform, indpb=0.1)
 	toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
-	toolbox.register("select", tools.selRoulette)
+	toolbox.register("select", tools.selTournament, tournsize=3)
+	#toolbox.register("select", tools.selRoulette)
 
 	random.seed(777)
 
@@ -43,24 +45,18 @@ def GA(fgsm_image, params, netG, z_array):
 	# Evaluate the entire population
 	# print(fitnesses) -> [(84,), (105,), (96,), (104,), (94,),  ... ] 이런식으로 저장됨.
 	fitnesses = list(map(toolbox.evaluate, pop))
-	minfit = 1000000.0
-	elit = None
 	for ind, fit in zip(pop, fitnesses):
-		if fit[0] < minfit:
-			minfit = fit[0]
-			elit = ind
 		ind.fitness.values = fit
 
 	# Extracting all the fitnesses of
 	fits = [ind.fitness.values[0] for ind in pop]
 
-
 	# Select the next generation individuals
 	# len(pop) -> 50, len(pop[0]) -> 5
-	offspring = toolbox.select(pop, len(pop)-1)
+	offspring = toolbox.select(pop, len(pop))
 
 	# Clone the selected individuals
-	offspring = [elit] + list(map(toolbox.clone, offspring))
+	offspring = list(map(toolbox.clone, offspring))
 
 	# Apply crossover and mutation on the offspring
 	'''
@@ -71,7 +67,7 @@ def GA(fgsm_image, params, netG, z_array):
 	# want to customize mutation method... there is no proper mutation operator in deap.tools...
 
 	for child1, child2 in zip(offspring[::2], offspring[1::2]):
-		if random.random() < MUTPB:
+		if random.random() < CXPB:
 			size = min(len(child1), len(child2))
 			for i in range(5):
 				cxpoint = random.randint(2, size - 1)
@@ -88,9 +84,6 @@ def GA(fgsm_image, params, netG, z_array):
 
 	for child1, child2 in zip(offspring[::2], offspring[1::2]):
 		if random.random() < CXPB:
-			toolbox.mate(child1, child2)
-			toolbox.mate(child1, child2)
-			toolbox.mate(child1, child2)
 			toolbox.mate(child1, child2)
 			del child1.fitness.values
 			del child2.fitness.values
