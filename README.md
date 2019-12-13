@@ -51,7 +51,7 @@ Follow the above **Fast way** section explanation.
 | A | A | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | B | B | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | C | C | Memetic GA | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
-| A | A | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
+| A | A | GA and GD | 10 | 200(GA + GD) | 70/100 | 80/100 | 82/100 | 77.33% |
 | B | B | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | C | C | GA and GD | 10 | 200(GA + GD) | -/100 | -/100 | -/100 | -% |
 | A | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
