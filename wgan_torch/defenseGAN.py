@@ -79,6 +79,8 @@ def main():
 	correct_defense_gan = [0] * 6  # number of fgsm images correctly classified for each epsilon by defense gan
 	correct_classifier = [0] * 6  # number of fgsm images correctly classified for each epsilon by classifier a
 
+	total_time = 0
+
 	i = 1
 	file_paths = glob.glob(fgsm_image_path)
 	file_paths.sort()
@@ -97,16 +99,18 @@ def main():
 		fgsm_image = torch.load(file_path)[0]
 		# imshow(fgsm_image)
 
-		''' YOU CAN PICK ONE OF THOSE METHODS BELOW. THOSE ARE FROM defenseGAN_method.py 
+		''' YOU CAN PICK ONE OF THOSE METHODS BELOW. THOSE ARE FROM defenseGAN_method.py
 		1. defensegan_memetic_ga : 100 GA + 100 GD (alternatively)
 		2. defensegan_ga_ga      : 100 GA + 100 GD (in order)
 		3. defensegan_ga         : 200 GA
-		4. defensegan_gd         : 200 GD   
+		4. defensegan_gd         : 200 GD
 		'''
-		#result_image, total_time = defensegan_memetic_ga(fgsm_image, params, netG)
-		result_image, total_time = defensegan_ga_gd(fgsm_image, params, netG)
-		#result_image, total_time = defensegan_ga(fgsm_image, params, netG)
-		#result_image, total_time = defensegan_gd(fgsm_image, params, netG)
+		#result_image, _total_time = defensegan_memetic_ga(fgsm_image, params, netG)
+		result_image, _total_time = defensegan_ga_gd(fgsm_image, params, netG)
+		#result_image, _total_time = defensegan_ga(fgsm_image, params, netG)
+		#result_image, _total_time = defensegan_gd(fgsm_image, params, netG)
+
+		total_time += _total_time
 
 		# to classify image
 		outputs_defense_gan = classifier(result_image)
