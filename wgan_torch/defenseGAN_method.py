@@ -12,23 +12,31 @@ from GD import GD
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 
-'''
 def defensegan_memetic_ga(x, params, netG):
 	z_array = []
 	for i in range(params['r']):
 		z_array.append(torch.FloatTensor(params['nz'], 1, 1).normal_(0, 1).numpy())
 
-	result = None
 	total_time = 0
 
-	for i in range(int(params['L']/2)):
-		z_array, result, time = GA(x, params, netG, z_array)
+	opt_result = None
+	optimal_loss = None
+
+	for i in range(int(params['L']/10)):
+		z_array, result, time = GA(x, params, netG, z_array, i)
 		total_time += time
-		z_array, result, time = GD(x, params, netG, z_array)
+		for i in range(8):
+			z_array, result, time, _ = GD(x, params, netG, z_array)
+			total_time += time
+		z_array, result, time, opt_loss = GD(x, params, netG, z_array)
 		total_time += time
 
-	return result, total_time
-'''
+		if optimal_loss is None or optimal_loss.ge(opt_loss):
+			optimal_loss = opt_loss
+			opt_result = result
+	print(optimal_loss)
+
+	return opt_result, total_time
 
 
 def defensegan_ga_gd(x, params, netG):

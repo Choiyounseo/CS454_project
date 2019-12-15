@@ -50,4 +50,4 @@ def GD(fgsm_image, params, netG, z_array, print_debug=False):
 
 	# print(optimal_loss)
 
-	return [z.detach().numpy().reshape(params['nz'], 1, 1) for z in zs], netG(z_hat), end-start
+	return [z.detach().numpy().reshape(params['nz'], 1, 1) for z in zs], netG(z_hat), end-start, optimal_loss

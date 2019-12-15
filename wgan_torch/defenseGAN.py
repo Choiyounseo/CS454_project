@@ -10,12 +10,12 @@ from classifiers.b import ClassifierB
 from classifiers.c import ClassifierC
 import glob
 from torchvision import transforms
-from defenseGAN_method import defensegan_ga_gd, defensegan_ga, defensegan_gd
+from defenseGAN_method import defensegan_ga_gd, defensegan_ga, defensegan_gd, defensegan_memetic_ga
 
 # Hyper parameters
 params = {
 	'input_size': 28,  # image size 1x64x64
-	'p': 50,   # population size for GA
+	'p': 10,   # population size for GA
 	'r': 10,   # population size for GD
 	'L': 200,  # number of iterations
 	'lr': 10,  # learning rate
@@ -89,7 +89,7 @@ def main():
 		i += 1
 
 		# get epsilon and ground truth by parsing
-		file_name = file_path.split('\\')[-1].split('_')
+		file_name = file_path.split('/')[-1].split('_')
 		print(file_name)
 		epsilon = float(file_name[0])
 		ground_truth = float(file_name[1])
@@ -105,8 +105,8 @@ def main():
 		3. defensegan_ga         : 200 GA
 		4. defensegan_gd         : 200 GD
 		'''
-		#result_image, _total_time = defensegan_memetic_ga(fgsm_image, params, netG)
-		result_image, _total_time = defensegan_ga_gd(fgsm_image, params, netG)
+		result_image, _total_time = defensegan_memetic_ga(fgsm_image, params, netG)
+		# result_image, _total_time = defensegan_ga_gd(fgsm_image, params, netG)
 		#result_image, _total_time = defensegan_ga(fgsm_image, params, netG)
 		#result_image, _total_time = defensegan_gd(fgsm_image, params, netG)
 
@@ -135,7 +135,7 @@ def main():
 		print('total # images for each epsilon : ' + str(total))
 		print('correct defense gan : ' + str(correct_defense_gan))
 		print('correct classifier : ' + str(correct_classifier))
-		break
+		print('total time for this method : %.0fh %.0fm %.0fs' % (_total_time // 3600, _total_time // 60, _total_time % 60))
 	time_rest = total_time % 3600
 	print('total time for this method : %.0fh %.0fm %.0fs' % (total_time // 3600, time_rest // 60, time_rest % 60))
 

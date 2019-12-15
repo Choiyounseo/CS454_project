@@ -9,7 +9,7 @@ import time
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 
-def GA(fgsm_image, params, netG, z_array):
+def GA(fgsm_image, params, netG, z_array, iter):
 	initial_population = torch.tensor(np.asarray(z_array), device=device)
 	initial_population = initial_population.view(params['p'], params['nz']).numpy()
 	def evalFunc(individual):
@@ -24,14 +24,14 @@ def GA(fgsm_image, params, netG, z_array):
 	creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 	creator.create("Individual", np.ndarray, fitness=creator.FitnessMin)  # minimizing the fitness value
 	toolbox = base.Toolbox()
-	CXPB, MUTPB = 0.4, 0.2
+	CXPB, MUTPB = 0.9, 0.8
 	toolbox.register("attr_float", random.random)
 	toolbox.register("individual", initIndividual, creator.Individual)
 	toolbox.register("population", initPopulation, list, toolbox.individual)
 	toolbox.register("evaluate", evalFunc)
 	toolbox.register("mate", tools.cxUniform, indpb=0.1)
 	toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
-	toolbox.register("select", tools.selTournament, tournsize=3)
+	toolbox.register("select", tools.selTournament, tournsize=2)
 	#toolbox.register("select", tools.selRoulette)
 
 	random.seed(777)
@@ -65,7 +65,6 @@ def GA(fgsm_image, params, netG, z_array):
     '''
 	# TODO: gaussian mutation maybe better..
 	# want to customize mutation method... there is no proper mutation operator in deap.tools...
-
 	for child1, child2 in zip(offspring[::2], offspring[1::2]):
 		if random.random() < MUTPB:
 			size = min(len(child1), len(child2))
@@ -114,7 +113,7 @@ def GA(fgsm_image, params, netG, z_array):
 	mean = sum(fits) / length
 	sum2 = sum(x * x for x in fits)
 	std = abs(sum2 / length - mean ** 2) ** 0.5
-	# print("mean:{}, std:{}\n".format(mean, std))
+	# print("mean:{}, std:{}, min:{}\n".format(mean, std, min(fits)))
 	best_ind = tools.selBest(pop, 1)[0]
 	z = torch.from_numpy(best_ind).view(1, 100, 1, 1)
 	# imshow(gen_image.detach())
