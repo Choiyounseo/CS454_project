@@ -95,7 +95,6 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | C | C | Memetic GA | 10 | 400 | 75/100 | 76/100 | 77/100 | 76% |
 | C | A | Memetic GA | 30 | 200 | 65/100 | 76/100 | 79/100 | 73.33% |
 | C | A | Memetic GA | 10 | 600 | 65/100 | 74/100 | 76/100 | 71.67% |
-| A | A | GD | 10 | 100 | 81/100 | 86/100 | 87/100 | 84.67% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
