@@ -67,7 +67,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | A | A | GD | 10 | 200 | 88/100 | 93/100 | 89/100 | 90% |
 | B | B | GD | 10 | 200 | 78/100 | 90/100 | 87/100 | 85% |
 | C | C | GD | 10 | 200 | 79/100 | 87/100 | 86/100 | 84% |
-| A | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| A | A | GA | 50 | 100 | 49/100 | 56/100 | 66/100 | 57% |
 | B | B | GA | 50 | 100 | 40/100 | 60/100 | 61x/100 | 53.66% |
 | C | C | GA | 50 | 100 | 52/100 | 58/100 | 62/100 | 57.33% |
 | A | A | Memetic GA | 10 | 200 | 74/100 | 78/100 | 83/100 | 78.33% (5h45m6s) |
@@ -83,7 +83,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | C | A | - | 10 | 200 | 32/100 | 37/100 | 22/100 | 30.33% |
 | C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
-| C | A | GA | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| C | A | GA | 50 | 100 | 54/100 | 62/100 | 69/100 | 61.67% |
 | C | A | Memetic GA | 10 | 200 | 61/100 | 70/100 | 73/100 | 68% |
 | C | A | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
 
@@ -95,6 +95,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | C | C | Memetic GA | 10 | 400 | 75/100 | 76/100 | 77/100 | 76% |
 | C | A | Memetic GA | 30 | 200 | 65/100 | 76/100 | 79/100 | 73.33% |
 | C | A | Memetic GA | 10 | 600 | 65/100 | 74/100 | 76/100 | 71.67% |
+| A | A | GD | 10 | 100 | 81/100 | 86/100 | 87/100 | 84.67% |
 
 ## DEAP for GA
 DEAP version == 1.3.0
