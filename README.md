@@ -85,7 +85,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | C | A | GD | 10 | 200 | 72/100 | 87/100 | 86/100 | 81.67% |
 | C | A | GA | 50 | 100 | 54/100 | 62/100 | 69/100 | 61.67% |
 | C | A | Memetic GA | 10 | 200 | 61/100 | 70/100 | 73/100 | 68% |
-| C | A | GA and GD | 10 | 200 | -/100 | -/100 | -/100 | -% |
+| C | A | GA and GD | 10 | 200 | 64/100 | 75/100 | 74/100 | 71% |
 
 ## Result 3 : other trials..
 | Classifier | Data | Method | Population | Iteration | Epsilon = 0.1 | Epsilon = 0.2 | Epsilon = 0.3 | Total |
