@@ -43,8 +43,9 @@ To compare the effectiveness of our new methods, we need to implement the origin
 #### 2. GA(Genetic Algorithm)
 Alternate GD with GA.
 - population : default value is 10. Also tried various number of population as parameter
-- crossover : Roulette wheel sampling method
+- crossover : Uniform crossover
 - mutation : Gaussian mutation
+- selection : Tournament selection
 - generation : default value is 200. Also tried various number of generation as parameter
 
 #### 3. Memetic GA
