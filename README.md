@@ -1,12 +1,13 @@
-# CS454_project
+# CS454 Project : Search Based DefenseGAN
 
 ## What we implemented
-DefenseGAN using **Genetic Algorithm(GA)**, instead of Gradient descent(GD)
+SB DefenseGAN (Search Based DefenseGAN) : DefenseGAN using **Genetic Algorithm(GA)**, instead of Gradient Descent(GD)
+The original DefenseGAN paper is in `Related works`.
 For more information, read our report : .
 
 ## How to execute
 ### Fast way
-The easiest way to execute GA + DefenseGAN is to run 'wgan_torch/defenseGAN.py'. All you need to change in file is one line whether to run wGAN with GD or GA. We provides some checkpoints we used to train necessary models. Run in the root of your project:
+The easiest way to execute SB DefenseGAN is to run `wgan_torch/defenseGAN.py`. All you need to change in file is one line to run SB DefenseGAN among 4 methods (4 methods are explained in `Methods` part). We provide some checkpoints we used to train necessary models. Run in the root of your project:
 ```
 >> cd wgan_torch
 >> virtualenv -p python3 venv  (python version with 3.6 or 3.7 are all possible)
@@ -28,7 +29,7 @@ Run FGSM(Fast Gradient Signed Method) to create adversarial attack images. All c
 To skip this step, just use provided FGSM images of each model. You can get each data from `wgan_torch/data/classifier_*` folders.
 
 #### 3. Train wGAN models
-
+Simply run `wgan_torch/train.py`. You can set your own parameters for training. While training, the generator's checkpoints will be stored in `wgan_torch/data/weights/netG_*.pth`, where `*` stands for number of training epochs.
 
 #### 4. wGAN + (GA or GD)
 Follow the above **Fast way** section explanation.
@@ -69,7 +70,7 @@ Unlike white-box, black-box adversaries have no access to the classifier or defe
 | B | B | GD | 10 | 200 | 78/100 | 90/100 | 87/100 | 85% |
 | C | C | GD | 10 | 200 | 79/100 | 87/100 | 86/100 | 84% |
 | A | A | GA | 50 | 100 | 49/100 | 56/100 | 66/100 | 57% |
-| B | B | GA | 50 | 100 | 40/100 | 60/100 | 61x/100 | 53.66% |
+| B | B | GA | 50 | 100 | 40/100 | 60/100 | 61/100 | 53.66% |
 | C | C | GA | 50 | 100 | 52/100 | 58/100 | 62/100 | 57.33% |
 | A | A | Memetic GA | 10 | 200 | 74/100 | 82/100 | 84/100 | 80% |
 | B | B | Memetic GA | 10 | 200 | 81/100 | 90/100 | 88/100 | 86.33% |
